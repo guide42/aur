@@ -1,0 +1,44 @@
+# Maintainer: Juan M Martínez <jm--at--guide42.com>
+
+pkgname=gopanda2
+pkgver=2.4
+pkgrel=1
+pkgdesc="Modern client to Pandanet that runs in the browser"
+arch=('x86_64' 'i686')
+url="http://pandanet-igs.com/communities/gopanda2"
+license=('GPL')
+install=gopanda2.install
+provides=(gopanda2)
+depends=(libnotify)
+if [ "$CARCH" = "x86_64" ]; then
+  source=("http://pandanet-igs.com/gopanda2/installer/stable/linux-64/gopanda2-linux-64.tar.gz")
+  md5sums=("288bb20de996e165293ad67a1763ee24")
+else
+  source=("http://pandanet-igs.com/gopanda2/installer/stable/linux-32/gopanda2-linux-32.tar.gz")
+  md5sums=("67b71d29e1fd03722ce639d1206f3722")
+fi
+
+package() {
+  cd "$pkgname-$pkgver"
+	
+  # Executable
+  mkdir -p "$pkgdir/usr/local/bin/gopanda2"
+  install -T GoPanda2 "$pkgdir/usr/local/bin/gopanda2/gopanda2"
+  install -m 644 nw.pak "$pkgdir/usr/local/bin/gopanda2"
+  install -m 644 icudtl.dat "$pkgdir/usr/local/bin/gopanda2"
+
+  # Library (for sound in Chrome/Chromium)
+  mkdir -p "$pkgdir/usr/lib/gopanda2"
+  install -D libffmpegsumo.so "$pkgdir/usr/lib/gopanda2"
+
+  # Icon
+  install -Dm 644 GoPanda2.png \
+    "$pkgdir/usr/share/icons/gopanda2.png"
+
+  # Desktop file
+  cp GoPanda2.orig gopanda2.desktop
+  echo "Exec=/usr/local/bin/gopanda2/gopanda2" >> gopanda2.desktop
+  echo "Icon=/usr/share/icons/gopanda2.png" >> gopanda2.desktop
+  install -Dm 644 gopanda2.desktop \
+    "$pkgdir/usr/share/applications/gopanda2.desktop"
+}
