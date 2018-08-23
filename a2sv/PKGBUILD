@@ -1,0 +1,35 @@
+# Maintainer: Juan M Martinez <jm-at-guide42.com>
+
+pkgbase=a2sv
+pkgname=a2sv
+_commit=4a876d503c90d5fc977761ba58830ea3758ab37b
+pkgver=1.6
+pkgrel=1
+pkgdesc='Auto Scanning to SSL Vulnerability'
+license=('MIT')
+arch=('any')
+url='https://github.com/hahwul/a2sv'
+makedepends=('git')
+depends=('python2-argparse' 'python2-netaddr' 'openssl')
+source=("git+$url#commit=$_commit")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$srcdir/a2sv/"
+  sed -i 's/python/python2/' *.py
+}
+
+package() {
+  install -dm755 "$pkgdir/usr/bin"
+  install -dm755 "$pkgdir/usr/share/a2sv"
+
+  cd "$srcdir/a2sv/"
+  cp -a * "$pkgdir/usr/share/a2sv"
+
+  cat > "$pkgdir/usr/bin/a2sv" << EOF
+#!/bin/sh
+exec python2 /usr/share/a2sv/a2sv.py "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/a2sv"
+}
