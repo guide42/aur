@@ -1,0 +1,30 @@
+# Maintainer: Juan Martinez <jm@guide42.com>
+
+_pkgname='fddf'
+pkgname="fddf"
+pkgver=r25.075fc8b
+pkgrel=1
+pkgdesc="Fast data dupe finder"
+arch=('x86_64')
+url='https://github.com/birkenfeld/fddf'
+license=('Apache-2.0')
+sha256sums=('SKIP')
+source=("git+https://github.com/birkenfeld/${_pkgname}")
+provides=('fddf')
+makedepends=('git' 'rust')
+
+pkgver() {
+    cd "${srcdir}/${_pkgname}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${srcdir}/${_pkgname}"
+  cargo build --release
+}
+
+package() {
+  cd "${srcdir}/${_pkgname}"
+  install -D ./target/release/${_pkgname} "${pkgdir}/usr/bin/${_pkgname}"
+}
+
